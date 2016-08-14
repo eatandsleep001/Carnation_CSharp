@@ -8,11 +8,12 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Carnation
+namespace CarnationNamespace
 {
     class Carnation
     {
         private Uri uri = null;
+        private int success = 0;
         private int countView = 0;
         private Mutex mutex = null;
         List<WebProxy> listProxy = null;
@@ -42,6 +43,7 @@ namespace Carnation
                 Console.WriteLine("Cannot create Uri");
             }
 
+            this.success = 0;
             this.countView = 0;
 
             this.mutex = new Mutex();
@@ -66,7 +68,7 @@ namespace Carnation
                     proxy = temp.Split(':')[0];
                     int.TryParse(temp.Split(':')[1], out port);
 
-                    if (port < 65535)
+                    if (port <= 65535 && port > 0)
                     {
                         this.listProxy.Add(new WebProxy(proxy, port));
                     }
@@ -105,14 +107,8 @@ namespace Carnation
 
         private void Do(int threadID, int timeout)
         {
-            string shortUrl = null;
             HttpStatusCode httpStatusCode;
             WebProxy webProxy;
-
-            if (this.uri.AbsoluteUri.Length > 33)
-                shortUrl = this.uri.AbsoluteUri.Substring(0, 15) +
-                    @"..." +
-                    this.uri.AbsoluteUri.Substring(this.uri.AbsoluteUri.Length - 15, 15);
 
             while (true)
             {
@@ -128,15 +124,19 @@ namespace Carnation
 
                 this.mutex.WaitOne();
 
+                if (httpStatusCode == HttpStatusCode.OK)
+                {
+                    this.success++;
+                }
+
+                Console.WriteLine("Thread {0,3}:{1,30}\t{2,5}|{3,0}|{4,0}",
+                    threadID, webProxy.Address, this.success, this.countView, httpStatusCode);
+
                 if (this.countView >= this.listProxy.Count)
                 {
                     this.mutex.ReleaseMutex();
                     break;
                 }
-
-                Console.WriteLine(@"Thread " + threadID + ":\t" +
-                    shortUrl + "\t" + webProxy.Address + "\t" + this.countView + "\t\t" + httpStatusCode);
-
                 this.mutex.ReleaseMutex();
             }
         }
@@ -155,6 +155,8 @@ namespace Carnation
 
             if (threadCount > this.listProxy.Count)
                 threadCount = this.listProxy.Count;
+
+            Console.Title += @" " + this.uri.AbsoluteUri;
 
             for (int i = 0; i < threadCount; i++)
             {

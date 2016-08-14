@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Carnation
+namespace CarnationNamespace
 {
     class IniFile
     {

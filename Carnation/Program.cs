@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Carnation
+namespace CarnationNamespace
 {
     class Program
     {
         static void Main(string[] args)
         {
+            Console.Title = @"Carnation";
+
             if (args.Length == 0)
                 DoWithoutArgs();
         }
