@@ -15,6 +15,7 @@ namespace CarnationNamespace
         private Uri uri = null;
         private int success = 0;
         private int countView = 0;
+        private int currentIndex = 0;
         private Mutex mutex = null;
         List<WebProxy> listProxy = null;
 
@@ -45,6 +46,7 @@ namespace CarnationNamespace
 
             this.success = 0;
             this.countView = 0;
+            this.currentIndex = 0;
 
             this.mutex = new Mutex();
 
@@ -114,9 +116,9 @@ namespace CarnationNamespace
             {
                 this.mutex.WaitOne();
 
-                webProxy = this.listProxy[this.countView];
+                webProxy = this.listProxy[this.currentIndex];
 
-                this.countView++;
+                this.currentIndex++;
 
                 this.mutex.ReleaseMutex();
 
@@ -124,13 +126,17 @@ namespace CarnationNamespace
 
                 this.mutex.WaitOne();
 
+                this.countView++;
+
                 if (httpStatusCode == HttpStatusCode.OK)
                 {
                     this.success++;
                 }
 
-                Console.WriteLine("Thread {0,3}:{1,30}\t{2,5}|{3,0}|{4,0}",
-                    threadID, webProxy.Address, this.success, this.countView, httpStatusCode);
+                Console.WriteLine(
+                    string.Format("Thread {0,3}:", threadID).PadRight(15, ' ') +
+                    string.Format("{0,3}", webProxy.Address).PadRight(30, ' ') +
+                    string.Format("{0,5}|{1,0}|{2,0}", this.success, this.countView, httpStatusCode));
 
                 if (this.countView >= this.listProxy.Count)
                 {
