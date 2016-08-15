@@ -117,7 +117,7 @@ namespace CarnationNamespace
             {
                 this.mutex.WaitOne();
 
-                if (this.currentIndex < this.currentIndex)
+                if (this.currentIndex < totalProxy)
                 {
                     webProxy = this.listProxy[this.currentIndex];
 
