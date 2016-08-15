@@ -111,6 +111,7 @@ namespace CarnationNamespace
         {
             HttpStatusCode httpStatusCode;
             WebProxy webProxy;
+            int totalProxy = this.listProxy.Count;
 
             while (true)
             {
@@ -136,7 +137,7 @@ namespace CarnationNamespace
                 Console.WriteLine(
                     string.Format("Thread {0,3}:", threadID).PadRight(15, ' ') +
                     string.Format("{0,3}", webProxy.Address).PadRight(30, ' ') +
-                    string.Format("{0,5}|{1,0}|{2,0}", this.success, this.countView, httpStatusCode));
+                    string.Format("{0,5}|{1,0}|{2,0}|{3,0}", this.success, this.countView, totalProxy, httpStatusCode));
 
                 if (this.countView >= this.listProxy.Count)
                 {
