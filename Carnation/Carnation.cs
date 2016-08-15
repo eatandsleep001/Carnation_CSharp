@@ -117,9 +117,18 @@ namespace CarnationNamespace
             {
                 this.mutex.WaitOne();
 
-                webProxy = this.listProxy[this.currentIndex];
+                if (this.currentIndex < this.currentIndex)
+                {
+                    webProxy = this.listProxy[this.currentIndex];
 
-                this.currentIndex++;
+                    this.currentIndex++;
+                }
+                else
+                {
+                    this.mutex.ReleaseMutex();
+
+                    break;
+                }
 
                 this.mutex.ReleaseMutex();
 
